@@ -71,3 +71,5 @@ checkpoints_old
 **/old/
 
 good_checkpoints
+
+.venv

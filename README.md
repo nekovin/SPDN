@@ -1,53 +1,36 @@
+# SPDN - Speckle Pattern Denoising Network
 
-# Honours
+OCT image denoising framework for speckle separation.
 
 ## Requirements
+
+```bash
 pip install -e .
+```
 
-## File Structure
-scripts/
-main.py begins process from initial data to final result
-apply_ssm.py applies the trained ssm model to data
-generate_report generates an evaluative 
+## Configuration
 
-data/
-Contains 2 images demonstrating what the data looks like
+Before running, set your dataset paths in `configs/paths.yaml` or via environment variables:
 
-ssm/
-The split-speckle module.
+```bash
+export SDOCT_PATH=/path/to/Sparsity_SDOCT_DATASET_2012
+export CHECKPOINT_DIR=./checkpoints
+```
 
-ssn2v/
-Contains reminant code of my SSN2V implementation. 
-
-n2v/
-https://github.com/juglab/n2v
-
-n2n/
-https://github.com/NVlabs/noise2noise
-
-n2s/
-https://github.com/czbiohub-sf/noise2self
-
-classification/
-https://github.com/Sudhandar/ResNet-50-model
-
-## Background
-
-# FPSS
-## Preprocessing
 ## Training
 
-Before training, configure the config.yaml files with training content.
+### SPDN Training
 
+```bash
+python scripts/spdn/train_spdn.py
 ```
-py trainers/fpss_trainer.py
+
+### Baseline Training
+
+```bash
+python scripts/n2n/train_n2n.py
+python scripts/n2s/train_n2s.py
+python scripts/n2v/train_n2v.py
 ```
 
-## Baseline Training
-'''
-py trainers/n2n_trainer.py
-py trainers/n2s_trainer.py
-py trainers/n2v_trainer.py
-'''
-
-## N2-FPSS Training
+### N2-SPDN Training

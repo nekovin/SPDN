@@ -1,15 +1,16 @@
 import matplotlib.pyplot as plt
-from ssm.evaluation import evaluate_baseline, evaluate_ssm_constraint, evaluate_progressssive_fusion_unet
-from fpss.utils import load_sdoct_dataset, display_metrics, display_grouped_metrics
+from ssm.evaluation import (
+    evaluate_baseline,
+    evaluate_ssm_constraint,
+    evaluate_progressssive_fusion_unet,
+)
+from spdn.utils.paths import get_sdoct_path
+from spdn.utils import load_sdoct_dataset, display_metrics, display_grouped_metrics
 from tqdm import tqdm
 import torch
 
-def main():
-    
-    override_config = {
-        "1" : ""
-    }
 
+def main():
     all_metrics = {}
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -29,14 +30,15 @@ def main():
     ax[1].set_title("Reference Image")
     plt.show()
 
-    
     n2n_metrics, n2n_denoised = evaluate_baseline(raw_image, reference, "n2n")
-    n2n_ssm_metrics, n2n_ssm_denoised = evaluate_ssm_constraint(raw_image, reference, "n2n")
+    n2n_ssm_metrics, n2n_ssm_denoised = evaluate_ssm_constraint(
+        raw_image, reference, "n2n"
+    )
     metrics = {}
-    metrics['n2n'] = n2n_metrics
-    metrics['n2n_ssm'] = n2n_ssm_metrics
-    all_metrics['n2n'] = n2n_metrics
-    all_metrics['n2n_ssm'] = n2n_ssm_metrics
+    metrics["n2n"] = n2n_metrics
+    metrics["n2n_ssm"] = n2n_ssm_metrics
+    all_metrics["n2n"] = n2n_metrics
+    all_metrics["n2n_ssm"] = n2n_ssm_metrics
     display_metrics(metrics)
     fig, ax = plt.subplots(1, 2, figsize=(15, 5))
     ax[0].imshow(n2n_denoised, cmap="gray")
@@ -46,12 +48,14 @@ def main():
     plt.show()
 
     n2v_metrics, n2v_denoised = evaluate_baseline(raw_image, reference, "n2v")
-    n2v_ssm_metrics, n2v_ssm_denoised = evaluate_ssm_constraint(raw_image, reference, "n2v")
+    n2v_ssm_metrics, n2v_ssm_denoised = evaluate_ssm_constraint(
+        raw_image, reference, "n2v"
+    )
     metrics = {}
-    metrics['n2v'] = n2v_metrics
-    metrics['n2v_ssm'] = n2v_ssm_metrics
-    all_metrics['n2v'] = n2v_metrics
-    all_metrics['n2v_ssm'] = n2v_ssm_metrics
+    metrics["n2v"] = n2v_metrics
+    metrics["n2v_ssm"] = n2v_ssm_metrics
+    all_metrics["n2v"] = n2v_metrics
+    all_metrics["n2v_ssm"] = n2v_ssm_metrics
     display_metrics(metrics)
     fig, ax = plt.subplots(1, 2, figsize=(15, 5))
     ax[0].imshow(n2v_denoised, cmap="gray")
@@ -61,14 +65,18 @@ def main():
     plt.show()
 
     last = False
-    n2s_metrics, n2s_denoised = evaluate_baseline(raw_image, reference, "n2s", last=last)
+    n2s_metrics, n2s_denoised = evaluate_baseline(
+        raw_image, reference, "n2s", last=last
+    )
     last = True
-    n2s_ssm_metrics, n2s_ssm_denoised = evaluate_ssm_constraint(raw_image, reference, "n2s", last=last)
+    n2s_ssm_metrics, n2s_ssm_denoised = evaluate_ssm_constraint(
+        raw_image, reference, "n2s", last=last
+    )
     metrics = {}
-    metrics['n2s'] = n2s_metrics
-    metrics['n2s_ssm'] = n2s_ssm_metrics
-    all_metrics['n2s'] = n2s_metrics
-    all_metrics['n2s_ssm'] = n2s_ssm_metrics
+    metrics["n2s"] = n2s_metrics
+    metrics["n2s_ssm"] = n2s_ssm_metrics
+    all_metrics["n2s"] = n2s_metrics
+    all_metrics["n2s_ssm"] = n2s_ssm_metrics
     display_metrics(metrics)
     fig, ax = plt.subplots(1, 2, figsize=(15, 5))
     ax[0].imshow(n2s_denoised, cmap="gray")
@@ -77,25 +85,26 @@ def main():
     ax[1].set_title("N2S SSM Denoised")
     plt.show()
 
-    prog_metrics, prog_image = evaluate_progressssive_fusion_unet(raw_image, reference, device)
+    prog_metrics, prog_image = evaluate_progressssive_fusion_unet(
+        raw_image, reference, device
+    )
 
     metrics = {}
-    metrics['pfn'] = prog_metrics
+    metrics["pfn"] = prog_metrics
     display_grouped_metrics(metrics)
 
-    all_metrics['pfn'] = prog_metrics
+    all_metrics["pfn"] = prog_metrics
 
     fig, ax = plt.subplots(1, 2, figsize=(15, 5))
 
     ax[0].imshow(prog_image, cmap="gray")
 
-    ax[0].set_title("Progressive Fusion Denoised")  
+    ax[0].set_title("Progressive Fusion Denoised")
     plt.show()
-    
+
     display_grouped_metrics(all_metrics)
     display_metrics(all_metrics)
 
-    
 
 if __name__ == "__main__":
     main()

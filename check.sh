@@ -1,0 +1,1 @@
+ruff check --fix-only --unsafe-fixes .  && ruff format . && mypy . && ruff check . && coverage run && (coverage report || coverage html) && pytest -m integration

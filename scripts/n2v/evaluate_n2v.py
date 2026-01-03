@@ -1,31 +1,30 @@
 import matplotlib.pyplot as plt
-from ssm.evaluation import evaluate_baseline, evaluate_ssm_constraint, evaluate_progressssive_fusion_unet
-from fpss.utils import load_sdoct_dataset, display_metrics, display_grouped_metrics
-from tqdm import tqdm
+from ssm.evaluation import evaluate_baseline, evaluate_ssm_constraint
+from spdn.utils.paths import get_sdoct_path
+from spdn.utils import load_sdoct_dataset, display_metrics
 import torch
 import os
 import random
-from fpss.utils.config import get_config
+from spdn.utils.config import get_config
+
 
 def main():
-
-    
     config_path = os.getenv("N2_CONFIG_PATH")
 
     config = get_config(config_path)
 
-    n_patients = config['training']['n_patients']
-    
+    n_patients = config["training"]["n_patients"]
+
     override_config = {
-        "eval" : {
+        "eval": {
             "ablation": f"patient_count/{n_patients}_patients",
-            "n_patients" : n_patients
-            }
+            "n_patients": n_patients,
         }
+    }
 
     all_metrics = {}
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    "cuda" if torch.cuda.is_available() else "cpu"
 
     sdoct_path = r"C:\Datasets\OCTData\boe-13-12-6357-d001\Sparsity_SDOCT_DATASET_2012"
     dataset = load_sdoct_dataset(sdoct_path)
@@ -34,7 +33,6 @@ def main():
     sample = random.choice(list(dataset.keys()))
     raw_image = dataset[sample]["raw"]
     reference = dataset[sample]["avg"][0][0]
-
 
     fig, ax = plt.subplots(1, 2, figsize=(15, 5))
     ax[0].imshow(raw_image.cpu().numpy()[0][0], cmap="gray")
@@ -51,10 +49,12 @@ def main():
     all_metrics = {}
 
     # Best checkpoints
-    try:    
-        n2v_metrics, n2v_denoised = evaluate_baseline(raw_image, reference, "n2v", config_path, override_config=override_config)
-        metrics['n2v'] = n2v_metrics
-        all_metrics['n2v'] = n2v_metrics
+    try:
+        n2v_metrics, n2v_denoised = evaluate_baseline(
+            raw_image, reference, "n2v", config_path, override_config=override_config
+        )
+        metrics["n2v"] = n2v_metrics
+        all_metrics["n2v"] = n2v_metrics
         ax[0][0].imshow(n2v_denoised, cmap="gray")
         ax[0][0].set_title("N2V Denoised")
     except Exception as e:
@@ -63,9 +63,11 @@ def main():
         n2v_denoised = None
 
     try:
-        n2v_ssm_metrics, n2v_ssm_denoised = evaluate_ssm_constraint(raw_image, reference, "n2v", config_path, override_config=override_config)
-        metrics['n2v_ssm'] = n2v_ssm_metrics
-        all_metrics['n2v_ssm'] = n2v_ssm_metrics
+        n2v_ssm_metrics, n2v_ssm_denoised = evaluate_ssm_constraint(
+            raw_image, reference, "n2v", config_path, override_config=override_config
+        )
+        metrics["n2v_ssm"] = n2v_ssm_metrics
+        all_metrics["n2v_ssm"] = n2v_ssm_metrics
         ax[0][1].imshow(n2v_ssm_denoised, cmap="gray")
         ax[0][1].set_title("N2V SSM Denoised")
     except Exception as e:
@@ -75,9 +77,16 @@ def main():
 
     # Last checkpoints
     try:
-        n2v_metrics_last, n2v_denoised_last = evaluate_baseline(raw_image, reference, "n2v", config_path, override_config=override_config, last=True)
-        metrics_last['n2v'] = n2v_metrics_last
-        all_metrics['n2v_last'] = n2v_metrics_last
+        n2v_metrics_last, n2v_denoised_last = evaluate_baseline(
+            raw_image,
+            reference,
+            "n2v",
+            config_path,
+            override_config=override_config,
+            last=True,
+        )
+        metrics_last["n2v"] = n2v_metrics_last
+        all_metrics["n2v_last"] = n2v_metrics_last
         ax[1][0].imshow(n2v_denoised_last, cmap="gray")
         ax[1][0].set_title("N2V Denoised Last")
     except Exception as e:
@@ -86,9 +95,16 @@ def main():
         n2v_denoised_last = None
 
     try:
-        n2v_ssm_metrics_last, n2v_ssm_denoised_last = evaluate_ssm_constraint(raw_image, reference, "n2v", config_path, override_config=override_config, last=True)
-        metrics_last['n2v_ssm'] = n2v_ssm_metrics_last
-        all_metrics['n2v_ssm_last'] = n2v_ssm_metrics_last
+        n2v_ssm_metrics_last, n2v_ssm_denoised_last = evaluate_ssm_constraint(
+            raw_image,
+            reference,
+            "n2v",
+            config_path,
+            override_config=override_config,
+            last=True,
+        )
+        metrics_last["n2v_ssm"] = n2v_ssm_metrics_last
+        all_metrics["n2v_ssm_last"] = n2v_ssm_metrics_last
         ax[1][1].imshow(n2v_ssm_denoised_last, cmap="gray")
         ax[1][1].set_title("N2V SSM Denoised Last")
     except Exception as e:
@@ -98,9 +114,16 @@ def main():
 
     # Best metrics checkpoints
     try:
-        n2v_metrics_best, n2v_denoised_best = evaluate_baseline(raw_image, reference, "n2v", config_path, override_config=override_config, best=True)
-        metrics_best['n2v'] = n2v_metrics_best
-        all_metrics['n2v_best'] = n2v_metrics_best
+        n2v_metrics_best, n2v_denoised_best = evaluate_baseline(
+            raw_image,
+            reference,
+            "n2v",
+            config_path,
+            override_config=override_config,
+            best=True,
+        )
+        metrics_best["n2v"] = n2v_metrics_best
+        all_metrics["n2v_best"] = n2v_metrics_best
         ax[2][0].imshow(n2v_denoised_best, cmap="gray")
         ax[2][0].set_title("N2V Denoised Best")
     except Exception as e:
@@ -109,9 +132,16 @@ def main():
         n2v_denoised_best = None
 
     try:
-        n2v_ssm_metrics_best, n2v_ssm_denoised_best = evaluate_ssm_constraint(raw_image, reference, "n2v", config_path, override_config=override_config, best=True)
-        metrics_best['n2v_ssm'] = n2v_ssm_metrics_best
-        all_metrics['n2v_ssm_best'] = n2v_ssm_metrics_best
+        n2v_ssm_metrics_best, n2v_ssm_denoised_best = evaluate_ssm_constraint(
+            raw_image,
+            reference,
+            "n2v",
+            config_path,
+            override_config=override_config,
+            best=True,
+        )
+        metrics_best["n2v_ssm"] = n2v_ssm_metrics_best
+        all_metrics["n2v_ssm_best"] = n2v_ssm_metrics_best
         ax[2][1].imshow(n2v_ssm_denoised_best, cmap="gray")
         ax[2][1].set_title("N2V SSM Denoised Best")
     except Exception as e:
@@ -125,7 +155,7 @@ def main():
 
     fig.tight_layout()
     plt.show()
-        
+
 
 if __name__ == "__main__":
     main()
